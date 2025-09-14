@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multi-Item Price Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    input, select, button { margin: 10px 0; width: 100%; padding: 8px; }
+    #bill { margin-top: 20px; white-space: pre-line; font-weight: bold; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .checkbox-row input {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Price Calculator</h2>
+
+  <label for="item">Choose an item:</label>
+  <select id="item">
+    <option value="gh">Groundnut_Holige</option>
+    <option value="rava">Rava_Laddu</option>
+    <option value="gladdu">Groundnut_Laddu</option>
+    <option value="til">Til_Laddu</option>
+    <option value="khajaya">Khajaya</option>
+    <option value="boondhi">Boondhi_Laddu</option>
+    <option value="flax">Flax_Seed_Laddu</option>
+    <option value="besan">Besan_Laddu</option>
+    <option value="methi">Methi_Laddu</option>
+    <option value="coconut">Coconut_Laddu</option>
+    <option value="dryfruit">Dry_Fruit_Laddu</option>
+    <option value="green">GreenGram_Laddu</option>
+    <option value="coriander">Coriander_Powder</option>
+    <option value="masaldosa">Masal_Dosa_Powder</option>
+    <option value="groundnutpowder">Groundnut_Chutney_Powder</option>
+    <option value="parched">Parched_gram_dal</option>
+    <option value="flaxpowder">Flax_Powder</option>
+    <option value="niger">Niger_Seed_Powder</option>
+    <option value="sambar">Sambar_Powder</option>
+    <option value="idli">Idli_Powder</option>
+    <option value="methipowder">Methi_Powder</option>
+    <option value="rasam">Rasam_Powder</option>
+    <option value="black">Black_pepper_Powder</option>
+    <option value="girmit">Girmit</option>
+    <option value="puffed">Spicy_Puffed_Rice</option>
+    <option value="poha">Spicy_Poha</option>
+    <option value="chakli">Chakli</option>
+    <option value="sev">Sev</option>
+  </select>
+
+  <label for="quantity">Enter quantity (grams):</label>
+  <input type="number" id="quantity" min="1" placeholder="e.g. 100">
+
+   <label>
+    <input type="checkbox" id="delivery">Home Delivery (+₹5)</label>
+
+  <button onclick="addToBill()">Add to Bill</button>
+  <button onclick="copyBill()">Copy Bill to Clipboard</button>
+
+  <div id="bill"></div>
+
+  <script>
+    const pricePerGram = {
+      "gh": 25, "rava": 0.45, "gladdu": 0.475, "til": 0.625, "khajaya": 0.625,
+      "boondhi": 0.625, "flax": 0.8, "besan": 1.1, "methi": 1.5, "coconut": 1.5,
+      "dryfruit": 2, "green": 0.75, "coriander": 0.5, "masaldosa": 0.575,
+      "groundnutpowder": 0.6, "parched": 0.6, "flaxpowder": 0.775, "niger": 0.8,
+      "sambar": 0.9, "idli": 0.95, "methipowder": 0.98, "rasam": 1.2,
+      "black": 2, "girmit": 60, "puffed": 0.4, "poha": 0.5, "chakli": 0.75, "sev": 0.9
+    };
+
+    let billItems = [];
+    let total = 0;
+
+    function addToBill() {
+      const dropdown = document.getElementById("item");
+      const itemKey = dropdown.value;
+      const itemLabel = dropdown.selectedOptions[0].text;
+      const quantity = parseInt(document.getElementById("quantity").value);
+
+      if (!itemKey || !quantity || quantity <= 0) {
+        alert("Please select a valid item and quantity.");
+        return;
+      }
+
+      const price = pricePerGram[itemKey] * quantity;
+      billItems.push(`${itemLabel} = ₹${price.toFixed(2)}`);
+      total += price;
+
+      let finalTotal = total;
+      let deliveryCharge = "";
+
+      if (document.getElementById("delivery").checked) {
+        finalTotal += 5;
+        deliveryCharge = "\nDelivery Charge: ₹5";
+      }
+
+      document.getElementById("bill").innerText =
+        billItems.join("\n") + deliveryCharge + `\n\nTotal: ₹${finalTotal.toFixed(2)}`;
+
+      // Reset input
+      document.getElementById("quantity").value = "";
+      dropdown.value = "";
+    }
+
+    function copyBill() {
+      const billText = document.getElementById("bill").innerText;
+
+      navigator.clipboard.writeText(billText).then(() => {
+        alert("Bill copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy bill. Please try again.");
+        console.error(err);
+      });
+    }
+  </script>
+
+</body>
+</html>
